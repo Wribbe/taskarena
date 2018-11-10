@@ -16,8 +16,12 @@ DIR_LOCAL_TASKWIKI_RC=$DIR_LOCAL_TASKWIKI/.taskrc
 
 DIR_LOCAL_TASKWARRIOR=$ROOT/.tasks
 DIR_LOCAL_TASKWARRIOR_RC=$ROOT/.taskrc
+DIR_LOCAL_TASKWARRIOR_HOOKS=$DIR_LOCAL_TASKWARRIOR/hooks
 
 DIR_LOCAL_TIMEWARRIOR_DB=$ROOT/.timewarrior
+
+DIR_HOOKS=$ROOT/.hooks
+HOOK_TIMEW=$DIR_HOOKS/on-modify.timewarrior
 
 
 export DIR_LOCAL_VIMVIKI=$DIR_LOCAL_VIMVIKI
@@ -57,3 +61,5 @@ task() {
 export TIMEWARRIORDB=$DIR_LOCAL_TIMEWARRIOR_DB
 # Set up database if it does not existing.
 [ -f $DIR_LOCAL_TIMEWARRIOR_DB ] || echo $(echo yes | timew 2>&1) > /dev/null
+# Symlink on-modify script if not linked.
+[ -h $DIR_LOCAL_TASKWARRIOR_HOOKS/${HOOK_TIMEW##*/} ] || ln -s $HOOK_TIMEW $DIR_LOCAL_TASKWARRIOR_HOOKS
