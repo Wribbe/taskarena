@@ -17,6 +17,8 @@ DIR_LOCAL_TASKWIKI_RC=$DIR_LOCAL_TASKWIKI/.taskrc
 DIR_LOCAL_TASKWARRIOR=$ROOT/.tasks
 DIR_LOCAL_TASKWARRIOR_RC=$ROOT/.taskrc
 
+DIR_LOCAL_TIMEWARRIOR_DB=$ROOT/.timewarrior
+
 
 export DIR_LOCAL_VIMVIKI=$DIR_LOCAL_VIMVIKI
 export DIR_LOCAL_TASKWIKI=$DIR_LOCAL_TASKWIKI
@@ -50,3 +52,8 @@ task() {
     | sed "s#$(dirname $BIN_TASK)/##g"\
     | sed '/^\s*$/d'
 }
+
+# Set up timewarrior database.
+export TIMEWARRIORDB=$DIR_LOCAL_TIMEWARRIOR_DB
+# Set up database if it does not existing.
+[ -f $DIR_LOCAL_TIMEWARRIOR_DB ] || echo $(echo yes | timew 2>&1) > /dev/null
