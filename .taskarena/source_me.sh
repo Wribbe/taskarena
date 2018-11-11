@@ -3,13 +3,13 @@
 EDITOR=nvim
 #EDITOR=vim
 
-ROOT=$(pwd)
+
+ROOT=$(dirname $(readlink -f $0))
 
 
 PATH_LOCAL_VIMRC=$ROOT/.vimrc
 
-
-DIR_LOCAL_VIMVIKI=$ROOT/.vimwiki
+DIR_LOCAL_VIMWIKI=$ROOT/.vimwiki
 
 DIR_LOCAL_TASKWIKI=$ROOT/.taskwiki
 DIR_LOCAL_TASKWIKI_RC=$DIR_LOCAL_TASKWIKI/.taskrc
@@ -23,16 +23,18 @@ DIR_LOCAL_TIMEWARRIOR_DB=$ROOT/.timewarrior
 DIR_HOOKS=$ROOT/.hooks
 HOOK_TIMEW=$DIR_HOOKS/on-modify.timewarrior
 
+FILE_TMP=$ROOT/.temp
 
-export DIR_LOCAL_VIMVIKI=$DIR_LOCAL_VIMVIKI
+
+export DIR_LOCAL_VIMWIKI=$DIR_LOCAL_VIMWIKI
 export DIR_LOCAL_TASKWIKI=$DIR_LOCAL_TASKWIKI
 export DIR_LOCAL_TASKWIKI_RC=$DIR_LOCAL_TASKWIKI_RC
 
 
 # Point (n)vim to the local .vimrc.
-# Store current used .vimrc/init.vim in .temp file.
-$EDITOR "+:call system('echo \$MYVIMRC > .temp')" "+:q!"
-read VIMINIT_OLD_TEMP < .temp
+# Store current used .vimrc/init.vim in $FILE_TMP.
+$EDITOR "+:call system('echo \$MYVIMRC > $FILE_TMP')" "+:q!"
+read VIMINIT_OLD_TEMP < $FILE_TMP
 # Don't overwrite the original conf with multiple sources.
 [ "$VIMINIT_OLD_TEMP" = "$PATH_LOCAL_VIMRC" ] || export MYVIMRC_OLD="$VIMINIT_OLD_TEMP"
 # Make $EDITOR load the local .vimrc.
@@ -63,3 +65,6 @@ export TIMEWARRIORDB=$DIR_LOCAL_TIMEWARRIOR_DB
 [ -f $DIR_LOCAL_TIMEWARRIOR_DB ] || echo $(echo yes | timew 2>&1) > /dev/null
 # Symlink on-modify script if not linked.
 [ -h $DIR_LOCAL_TASKWARRIOR_HOOKS/${HOOK_TIMEW##*/} ] || ln -s $HOOK_TIMEW $DIR_LOCAL_TASKWARRIOR_HOOKS
+
+# Check and setup vimwiki if it does not exist.
+[ -d $DIR_LOCAL_VIMWIKI ] || mkdir $DIR_LOCAL_VIMWIKI
